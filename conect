@@ -1,0 +1,84 @@
+<?php  
+
+
+
+session_start();
+
+$name = '';
+$location = '';
+$update = false; 
+$id = 0;
+
+$mysqli = new mysqli('localhost','root','','crud') or die(mysqli_error($mysqli));
+
+
+//insert data
+
+if(isset($_POST['save'])){
+	$name =  $_POST['name'];
+	$location = $_POST['location'];
+
+	$_SESSION['message'] = "Recode has been save!"; 
+	$_SESSION['msg_type'] = "success ";
+	
+	header("location:index.php");
+
+
+
+$mysqli->query("INSERT INTO  data (name,location)values('$name','$location')" ) or 
+
+	die($mysqli->error); 
+
+
+}
+
+//funtion delete
+
+if (isset($_GET['delete'])) {
+	$id= $_GET['delete'];
+	 $mysqli->query("DELETE  FROM data WHERE id=$id") or die($mysqli->error());
+	 
+	 $_SESSION['message'] = "Recode has been delete."; 
+	 $_SESSION['msg_type'] = "danger ";
+
+	 header("location:index.php");
+
+
+}
+
+//funtion edit
+
+if (isset($_GET['edit'])){
+	$id= $_GET['edit'];
+	$update=true;
+	$result = $mysqli->query ("SELECT * FROM data WHERE id=$id") or die($mysqli->error());
+
+	if (count($result)==1){
+		$row = $result->fetch_array();
+		$name = $row ['name'];
+		$location = $row[ 'location'];
+
+
+	}
+}
+
+//funtion update
+
+if( isset($_POST['update'])){
+	$id = $_POST['id'];
+	$name = $_POST['name'];
+	$location = $_POST['location'];
+
+	$mysqli->query("UPDATE data SET name = '$name',location='$location' WHERE id=$id")or die($mysqli->error());
+	
+	$_SESSION['message']='Record has been Update';
+	$_SESSION['msg_type']= 'warning';
+
+	header("location:index.php");
+
+
+}
+
+	
+
+?>
